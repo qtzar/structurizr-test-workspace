@@ -1,48 +1,24 @@
-/*
- * This is a combined version of the following workspaces, with automatic layout enabled:
- *
- * - "Big Bank plc - System Landscape" (https://structurizr.com/share/28201/)
- * - "Big Bank plc - Internet Banking System" (https://structurizr.com/share/36141/)
-*/
-workspace "Big Bank plc" "This is an example workspace to illustrate the key features of Structurizr, via the DSL, based around a fictional online banking system." {
+// https://structurizr.com/share/36141
+
+workspace extends ../model.dsl {
+    name "Big Bank plc - Internet Banking System"
+    description "The software architecture of the Big Bank plc Internet Banking System."
 
     model {
-        customer = person "Personal Banking Customer" "A customer of the bank, with personal bank accounts." "Customer"
-
-        group "Big Bank plc" {
-            supportStaff = person "Customer Service Staff" "Customer service staff within the bank." "Bank Staff"
-            backoffice = person "Back Office Staff" "Administration and support staff within the bank." "Bank Staff"
-
-            mainframe = softwaresystem "Mainframe Banking System" "Stores all of the core banking information about customers, accounts, transactions, etc." "Existing System"
-            email = softwaresystem "E-mail System" "The internal Microsoft Exchange e-mail system." "Existing System"
-            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"
-
-            internetBankingSystem = softwaresystem "Internet Banking System" "Allows customers to view information about their bank accounts, and make payments." {
-                singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
-                mobileApp = container "Mobile App" "Provides a limited subset of the Internet banking functionality to customers via their mobile device." "Xamarin" "Mobile App"
-                webApplication = container "Web Application" "Delivers the static content and the Internet banking single page application." "Java and Spring MVC"
-                apiApplication = container "API Application" "Provides Internet banking functionality via a JSON/HTTPS API." "Java and Spring MVC" {
-                    signinController = component "Sign In Controller" "Allows users to sign in to the Internet Banking System." "Spring MVC Rest Controller"
-                    accountsSummaryController = component "Accounts Summary Controller" "Provides customers with a summary of their bank accounts." "Spring MVC Rest Controller"
-                    resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "Spring MVC Rest Controller"
-                    securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "Spring Bean"
-                    mainframeBankingSystemFacade = component "Mainframe Banking System Facade" "A facade onto the mainframe banking system." "Spring Bean"
-                    emailComponent = component "E-mail Component" "Sends e-mails to users." "Spring Bean"
-                }
-                database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
+        !ref internetbankingsystem {
+            singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
+            mobileApp = container "Mobile App" "Provides a limited subset of the Internet banking functionality to customers via their mobile device." "Xamarin" "Mobile App"
+            webApplication = container "Web Application" "Delivers the static content and the Internet banking single page application." "Java and Spring MVC"
+            apiApplication = container "API Application" "Provides Internet banking functionality via a JSON/HTTPS API." "Java and Spring MVC" {
+                signinController = component "Sign In Controller" "Allows users to sign in to the Internet Banking System." "Spring MVC Rest Controller"
+                accountsSummaryController = component "Accounts Summary Controller" "Provides customers with a summary of their bank accounts." "Spring MVC Rest Controller"
+                resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "Spring MVC Rest Controller"
+                securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "Spring Bean"
+                mainframeBankingSystemFacade = component "Mainframe Banking System Facade" "A facade onto the mainframe banking system." "Spring Bean"
+                emailComponent = component "E-mail Component" "Sends e-mails to users." "Spring Bean"
             }
+            database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
         }
-
-        # relationships between people and software systems
-        customer -> internetBankingSystem "Views account balances, and makes payments using"
-        internetBankingSystem -> mainframe "Gets account information from, and makes payments using"
-        internetBankingSystem -> email "Sends e-mail using"
-        email -> customer "Sends e-mails to"
-        customer -> supportStaff "Asks questions to" "Telephone"
-        supportStaff -> mainframe "Uses"
-        customer -> atm "Withdraws cash using"
-        atm -> mainframe "Uses"
-        backoffice -> mainframe "Uses"
 
         # relationships to/from containers
         customer -> webApplication "Visits bigbank.com/ib using" "HTTPS"
@@ -87,7 +63,6 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                     softwareSystemInstance mainframe
                 }
             }
-
         }
 
         deploymentEnvironment "Live" {
@@ -132,11 +107,6 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
     }
 
     views {
-        systemlandscape "SystemLandscape" {
-            include *
-            autoLayout
-        }
-
         systemcontext internetBankingSystem "SystemContext" {
             include *
             animation {
@@ -145,7 +115,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 mainframe
                 email
             }
-            autoLayout
+
             description "The system context diagram for the Internet Banking System."
             properties {
                 structurizr.groups false
@@ -162,7 +132,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 apiApplication
                 database
             }
-            autoLayout
+
             description "The container diagram for the Internet Banking System."
         }
 
@@ -174,23 +144,23 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 accountsSummaryController mainframeBankingSystemFacade
                 resetPasswordController emailComponent
             }
-            autoLayout
+
             description "The component diagram for the API Application."
         }
 
         image mainframeBankingSystemFacade "MainframeBankingSystemFacade" {
-            image https://raw.githubusercontent.com/structurizr/examples/main/dsl/big-bank-plc/internet-banking-system/mainframe-banking-system-facade.png
-            title "[Code] Mainframe Banking System Facade"
+            image mainframe-banking-system-facade.png
+            title "Class diagram for the Mainframe Banking System Facade component"
         }
 
-        dynamic apiApplication "SignIn" "Summarises how the sign in feature works in the single-page application." {
+        dynamic apiApplication "SignIn" {
             singlePageApplication -> signinController "Submits credentials to"
             signinController -> securityComponent "Validates credentials using"
             securityComponent -> database "select * from users where username = ?"
             database -> securityComponent "Returns user data to"
             securityComponent -> signinController "Returns true if the hashed password matches"
             signinController -> singlePageApplication "Sends back an authentication token to"
-            autoLayout
+
             description "Summarises how the sign in feature works in the single-page application."
         }
 
@@ -201,7 +171,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 developerWebApplicationInstance developerApiApplicationInstance
                 developerDatabaseInstance
             }
-            autoLayout
+
             description "An example development deployment scenario for the Internet Banking System."
         }
 
@@ -214,7 +184,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 livePrimaryDatabaseInstance
                 liveSecondaryDatabaseInstance
             }
-            autoLayout
+
             description "An example live deployment scenario for the Internet Banking System."
         }
 
@@ -260,4 +230,5 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
             }
         }
     }
+
 }
