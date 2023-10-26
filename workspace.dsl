@@ -106,6 +106,10 @@ workspace {
     }
 
     views {
+        !script groovy {
+            workspace.views.createDefaultViews()
+        }
+
         container softwareSystem "Containers_All" {
             include *
             autolayout
