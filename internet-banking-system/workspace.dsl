@@ -151,6 +151,7 @@ workspace extends ../model.dsl {
         image mainframeBankingSystemFacade "MainframeBankingSystemFacade" {
             image mainframe-banking-system-facade.png
             title "Class diagram for the Mainframe Banking System Facade component"
+            description "Class diagram for the Mainframe Banking System Facade component"
         }
 
         dynamic apiApplication "SignIn" {
