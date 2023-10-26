@@ -59,6 +59,11 @@ workspace "Amazon Web Services Example" "An example AWS deployment architecture.
     }
 
     views {
+
+        !script groovy {
+            workspace.views.createDefaultViews()
+        }
+
         deployment springPetClinic "Live" "AmazonWebServicesDeployment" {
             include *
             autolayout lr
