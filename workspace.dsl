@@ -132,6 +132,11 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
     }
 
     views {
+
+        !script groovy {
+            workspace.views.createDefaultViews()
+        }
+
         systemlandscape "SystemLandscape" {
             include *
             autoLayout
