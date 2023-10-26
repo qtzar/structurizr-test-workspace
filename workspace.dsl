@@ -1,93 +1,168 @@
-workspace "Amazon Web Services Example" "An example AWS deployment architecture." {
+workspace {
+
+    !identifiers hierarchical
 
     model {
-        springPetClinic = softwaresystem "Spring PetClinic" "Allows employees to view and manage information regarding the veterinarians, the clients, and their pets." {
-            webApplication = container "Web Application" "Allows employees to view and manage information regarding the veterinarians, the clients, and their pets." "Java and Spring Boot" {
-                tags "Application"
-            }
-            database = container "Database" "Stores information regarding the veterinarians, the clients, and their pets." "Relational database schema" {
-                tags "Database"
-            }
-        }
+        user = person "User"
 
-        webApplication -> database "Reads from and writes to" "MySQL Protocol/SSL"
+        softwareSystem = softwareSystem "Software System"{
 
-        live = deploymentEnvironment "Live" {
+            webapp = container "Web Application"
 
-            deploymentNode "Amazon Web Services" {
-                tags "Amazon Web Services - Cloud"
-
-                region = deploymentNode "US-East-1" {
-                    tags "Amazon Web Services - Region"
-
-                    route53 = infrastructureNode "Route 53" {
-                        description "Highly available and scalable cloud DNS service."
-                        tags "Amazon Web Services - Route 53"
-                    }
-
-                    elb = infrastructureNode "Elastic Load Balancer" {
-                        description "Automatically distributes incoming application traffic."
-                        tags "Amazon Web Services - Elastic Load Balancing"
-                    }
-
-                    deploymentNode "Autoscaling group" {
-                        tags "Amazon Web Services - Auto Scaling"
-
-                        deploymentNode "Amazon EC2" {
-                            tags "Amazon Web Services - EC2"
-
-                            webApplicationInstance = containerInstance webApplication
-                        }
-                    }
-
-                    deploymentNode "Amazon RDS" {
-                        tags "Amazon Web Services - RDS"
-
-                        deploymentNode "MySQL" {
-                            tags "Amazon Web Services - RDS MySQL instance"
-
-                            databaseInstance = containerInstance database
-                        }
-                    }
-
+            service1 = group "Service 1" {
+                service1Api = container "Service 1 API" {
+                    tags "Service 1" "Service API"
+                }
+                container "Service 1 Database" {
+                    tags "Service 1" "Database"
+                    service1Api -> this "Reads from and writes to"
                 }
             }
 
-            route53 -> elb "Forwards requests to" "HTTPS"
-            elb -> webApplicationInstance "Forwards requests to" "HTTPS"
+            service2 = group "Service 2" {
+                service2Api = container "Service 2 API" {
+                    tags "Service 2" "Service API"
+                }
+                container "Service 2 Database" {
+                    tags "Service 2" "Database"
+                    service2Api -> this "Reads from and writes to"
+                }
+            }
+
+            service3 = group "Service 3" {
+                service3Api = container "Service 3 API" {
+                    tags "Service 3" "Service API"
+                }
+                container "Service 3 Database" {
+                    tags "Service 3" "Database"
+                    service3Api -> this "Reads from and writes to"
+                }
+
+            }
+
+            service4 = group "Service 4" {
+                service4Api = container "Service 4 API" {
+                    tags "Service 4" "Service API"
+                }
+                container "Service 4 Database" {
+                    tags "Service 4" "Database"
+                    service4Api -> this "Reads from and writes to"
+                }
+            }
+
+            service5 = group "Service 5" {
+                service5Api = container "Service 5 API" {
+                    tags "Service 5" "Service API"
+                }
+                container "Service 5 Database" {
+                    tags "Service 5" "Database"
+                    service5Api -> this "Reads from and writes to"
+                }
+            }
+
+            service6 = group "Service 6" {
+                service6Api = container "Service 6 API" {
+                    tags "Service 6" "Service API"
+                }
+                container "Service 6 Database" {
+                    tags "Service 6" "Database"
+                    service6Api -> this "Reads from and writes to"
+                }
+            }
+
+            service7 = group "Service 7" {
+                service7Api = container "Service 7 API" {
+                    tags "Service 7" "Service API"
+                }
+                container "Service 7 Database" {
+                    tags "Service 7" "Database"
+                    service7Api -> this "Reads from and writes to"
+                }
+            }
+
+            service8 = group "Service 8" {
+                service8Api = container "Service 8 API" {
+                    tags "Service 8" "Service API"
+                }
+                container "Service 8 Database" {
+                    tags "Service 8" "Database"
+                    service8Api -> this "Reads from and writes to"
+                }
+            }
+
+            user -> webapp
+            webapp -> service1Api
+            service1Api -> service2Api
+            service1Api -> service3Api
+            service2Api -> service4Api
+            service2Api -> service5Api
+            webapp -> service3Api
+            service3Api -> service4Api
+            service3Api -> service7Api
+            service4Api -> service6Api
+            service7Api -> service8Api
         }
+
     }
 
     views {
-        deployment springPetClinic "Live" "AmazonWebServicesDeployment" {
+        container softwareSystem "Containers_All" {
             include *
-            autolayout lr
+            autolayout
+        }
 
-            animation {
-                route53
-                elb
-                webApplicationInstance
-                databaseInstance
-            }
+        container softwareSystem "Containers_Service1" {
+            include ->softwareSystem.service1->
+            autolayout
+        }
+
+        container softwareSystem "Containers_Service2" {
+            include ->softwareSystem.service2->
+            autolayout
+        }
+
+        container softwareSystem "Containers_Service3" {
+            include ->softwareSystem.service3->
+            autolayout
         }
 
         styles {
-            element "Element" {
-                shape roundedbox
-                background #ffffff
+            element "Person" {
+                shape Person
             }
-            element "Container" {
-                background #ffffff
-            }
-            element "Application" {
-                background #ffffff
+            element "Service API" {
+                shape hexagon
             }
             element "Database" {
                 shape cylinder
             }
+            element "Service 1" {
+                background #91F0AE
+            }
+            element "Service 2" {
+                background #EDF08C
+            }
+            element "Service 3" {
+                background #8CD0F0
+            }
+            element "Service 4" {
+                background #F08CA4
+            }
+            element "Service 5" {
+                background #FFAC33
+            }
+            element "Service 6" {
+                background #DD8BFE
+            }
+            element "Service 7" {
+                background #89ACFF
+            }
+            element "Service 8" {
+                background #FDA9F4
+            }
+
         }
 
-        themes https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json
     }
 
 }
