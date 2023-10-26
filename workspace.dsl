@@ -29,6 +29,10 @@ workspace "Financial Risk System" "This is a simple (incomplete) example C4 mode
 
     views {
 
+        !script groovy {
+            workspace.views.createDefaultViews()
+        }
+
         systemContext financialRiskSystem "Context" "An example System Context diagram for the Financial Risk System architecture kata." {
             include *
             autoLayout
